@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ember Clash — a duel card battler</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="table">
+  <header>
+    <div class="brand">EMBER CLASH</div>
+    <div class="hud">
+      <span id="turn-label">TURN 1</span>
+      <span id="score-label">SCORE 0</span>
+      <button class="hbtn" id="sound-toggle" type="button">SOUND ON</button>
+      <button class="hbtn" id="restart-button" type="button">RESTART</button>
+    </div>
+  </header>
+
+  <div id="foe-zone">
+    <div class="avatar" title="Cinder Warden">▲</div>
+    <div class="side-info">
+      <div class="side-name">CINDER WARDEN <small>· THE EMBER FOE</small></div>
+      <div id="foe-hp"></div>
+      <div id="foe-intent"></div>
+    </div>
+    <div id="foe-hand"></div>
+  </div>
+
+  <div id="center">
+    <div id="center-play"></div>
+    <div id="float-layer"></div>
+  </div>
+
+  <div id="player-zone">
+    <div class="player-row">
+      <div class="avatar player" title="You, the Ember Warden">▲</div>
+      <div class="side-info">
+        <div class="side-name">YOU <small>· EMBER WARDEN</small></div>
+        <div id="player-hp"></div>
+      </div>
+      <div id="energy-pips"></div>
+      <span id="deck-counts"></span>
+      <button id="end-turn" type="button">END TURN</button>
+    </div>
+    <div id="player-hand"></div>
+    <div id="log"></div>
+  </div>
+
+  <div class="overlay" id="overlay-title">
+    <div class="panel">
+      <h1>EMBER CLASH</h1>
+      <p class="tagline">A duel card battler. You against the Cinder Warden — 30 HP each, one deck, four elements.</p>
+      <div class="rules">
+        <b>HOW TO PLAY</b><br>
+        · Each turn you get <b>3 energy</b>. Cards cost energy — click one to play it.<br>
+        · <b>Element Echo:</b> play two cards of the same element in one turn and the second one hits <b>+2</b>.<br>
+        · <b>Cinder shows its plan</b> before you end your turn — answer it with block, healing, or a faster kill.<br>
+        · Block fades at the start of your next turn. First to <b>0 HP</b> loses.<br>
+        · Keyboard: <b>1–7</b> play a card, <b>Enter</b> ends the turn.
+      </div>
+      <button class="big-button" id="play-button" type="button">PLAY</button>
+      <div class="keys-hint">Original game · no sign-up · runs fully offline</div>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="overlay-win">
+    <div id="confetti"></div>
+    <div class="panel">
+      <h1>VICTORY</h1>
+      <p class="tagline">The Cinder Warden's embers fade. The table is yours.</p>
+      <p class="stats" id="win-stats"></p>
+      <button class="big-button" id="again-win" type="button">PLAY AGAIN</button>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="overlay-loss">
+    <div class="panel">
+      <h1 class="lose">DEFEAT</h1>
+      <p class="tagline">The Cinder Warden's embers burn on. Shuffle up and go again.</p>
+      <p class="stats" id="loss-stats"></p>
+      <button class="big-button" id="again-loss" type="button">TRY AGAIN</button>
+    </div>
+  </div>
+</div>
+
+<script src="cards.js"></script>
+<script src="ai.js"></script>
+<script src="audio.js"></script>
+<script src="game.js"></script>
+<script src="shots.js"></script>
+</body>
+</html>
