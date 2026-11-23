@@ -32,6 +32,7 @@ const AudioFX = {
   },
 
   click() { this.tone(660, 0.06, "triangle", 0.05, 0); },
+  turn() { this.tone(587, 0.09, "triangle", 0.05, 0); this.tone(880, 0.12, "triangle", 0.05, 0.09); },
   draw() { this.tone(520, 0.08, "sine", 0.05, 0); this.tone(780, 0.08, "sine", 0.04, 0.06); },
   playCard() { this.tone(330, 0.12, "triangle", 0.07, 0); this.tone(495, 0.1, "triangle", 0.05, 0.07); },
   hit() { this.tone(140, 0.18, "sawtooth", 0.09, 0); this.tone(90, 0.22, "square", 0.06, 0.02); },

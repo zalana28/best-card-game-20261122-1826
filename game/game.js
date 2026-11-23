@@ -66,6 +66,11 @@ function newGame(seed) {
   drawCards(state.foe, HAND_SIZE);
   startPlayerTurn();
   setScreen("title");
+  const bestEl = document.getElementById("best-score");
+  if (bestEl) {
+    const best = bestScore();
+    bestEl.textContent = best > 0 ? "Best score so far: " + best : "";
+  }
   render();
 }
 
@@ -97,7 +102,17 @@ function startPlayerTurn() {
 
 function logEvent(text) {
   state.log.push(text);
-  if (state.log.length > 4) state.log.shift();
+  if (state.log.length > 6) state.log.shift();
+}
+
+// Best score across sessions, kept in the browser only.
+function bestScore() {
+  try { return Number(window.localStorage.getItem("ember-best") || 0); } catch (e) { return 0; }
+}
+function saveBestScore(score) {
+  try {
+    if (score > bestScore()) window.localStorage.setItem("ember-best", String(score));
+  } catch (e) { /* private mode: no best score, game still plays */ }
 }
 
 function dealDamage(target, amount, by) {
@@ -204,6 +219,7 @@ async function endTurn() {
   state.turn += 1;
   startPlayerTurn();
   state.busy = false;
+  AudioFX.turn();
   render();
 }
 
@@ -211,6 +227,7 @@ async function endTurn() {
 function checkEnd() {
   if (state.foe.hp <= 0) {
     state.score = state.damageDealt + state.player.hp * 2 + Math.max(0, 12 - state.turn) * 3;
+    saveBestScore(state.score);
     setScreen("win");
     AudioFX.win();
     render();
@@ -236,7 +253,7 @@ function setScreen(name) {
     document.getElementById("win-stats").textContent =
       "Turns " + state.turn + " · Damage dealt " + state.damageDealt +
       " · Cards played " + state.cardsPlayed + " · HP left " + state.player.hp +
-      " · Score " + state.score;
+      " · Score " + state.score + " · Best " + bestScore();
     launchConfetti();
   }
   if (name === "loss") {

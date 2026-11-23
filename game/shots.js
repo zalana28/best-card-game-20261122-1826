@@ -71,12 +71,21 @@ function playScene(name) {
     return;
   }
   if (name === "loss") {
-    newGame(5);
-    startPlaying();
-    for (let round = 0; round < 15; round += 1) {
-      autopilotRound({ aggression: 0.7, caution: 0.2, guardless: true });
-      if (state.screen === "loss") return;
-      if (state.screen !== "play") return;
+    // Try seeds in order until one actually loses: the guardless
+    // autopilot only plays damage, so with a stronger deck some seeds
+    // win instead. The first losing seed is the screenshot, every run.
+    const params = new URLSearchParams(location.search);
+    const seeds = params.get("seeds")
+      ? params.get("seeds").split(",").map((s) => Number(s))
+      : [5, 9, 13, 17, 21, 25, 29, 33, 37, 41, 45, 49];
+    for (const seed of seeds) {
+      newGame(seed);
+      startPlaying();
+      for (let round = 0; round < 15; round += 1) {
+        autopilotRound({ aggression: 0.7, caution: 0.2, guardless: true });
+        if (state.screen === "loss") return;
+        if (state.screen !== "play") break;
+      }
     }
     return;
   }

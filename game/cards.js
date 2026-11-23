@@ -31,22 +31,38 @@ const CARDS = {
   "stone-slam": { name: "Stone Slam", element: "stone", cost: 3, dmg: 9, text: "Deal 9 damage." },
   "stone-wall": { name: "Stone Wall", element: "stone", cost: 2, block: 8, text: "Gain 8 block." },
   "quake": { name: "Quake", element: "stone", cost: 2, dmg: 3, block: 3, text: "Deal 3. Gain 3 block." },
+  "inferno": { name: "Inferno", element: "flame", cost: 4, dmg: 12, text: "Deal 12 damage." },
+  "cinder-rain": { name: "Cinder Rain", element: "flame", cost: 3, dmg: 2, hits: 3, text: "Deal 2 damage, three times." },
+  "wildfire": { name: "Wildfire", element: "flame", cost: 2, dmg: 3, surge: 4, text: "Deal 3. +4 if a Flame card was played this turn." },
+  "flood": { name: "Flood", element: "tide", cost: 3, dmg: 7, draw: 1, text: "Deal 7. Draw a card." },
+  "mist-veil": { name: "Mist Veil", element: "tide", cost: 2, block: 6, draw: 1, text: "Gain 6 block. Draw a card." },
+  "undertow": { name: "Undertow", element: "tide", cost: 2, dmg: 5, block: 2, text: "Deal 5. Gain 2 block." },
+  "regrowth": { name: "Regrowth", element: "leaf", cost: 3, heal: 8, draw: 1, text: "Heal 8. Draw a card." },
+  "thorn-storm": { name: "Thorn Storm", element: "leaf", cost: 2, dmg: 2, hits: 3, text: "Deal 2 damage, three times." },
+  "root-snare": { name: "Root Snare", element: "leaf", cost: 1, dmg: 1, heal: 3, draw: 1, text: "Deal 1. Heal 3. Draw a card." },
+  "boulder": { name: "Boulder", element: "stone", cost: 4, dmg: 13, text: "Deal 13 damage." },
+  "fortress": { name: "Fortress", element: "stone", cost: 3, block: 12, text: "Gain 12 block." },
+  "avalanche": { name: "Avalanche", element: "stone", cost: 3, dmg: 6, block: 4, text: "Deal 6. Gain 4 block." },
 };
 
-// How many copies of each card go into a 20-card deck.
+// How many copies of each card go into a 28-card deck (26 distinct).
 const DECK_LIST = [
-  ["flame-lash", 3], ["flame-burst", 1], ["spark-surge", 1],
-  ["twin-flames", 1], ["ember-guard", 2], ["tide-cut", 2],
-  ["tide-shield", 2], ["riptide", 1], ["thorn-whip", 2],
-  ["mend", 1], ["overgrowth", 1], ["stone-slam", 1],
-  ["stone-wall", 1], ["quake", 1],
+  ["flame-lash", 2], ["flame-burst", 1], ["spark-surge", 1],
+  ["twin-flames", 1], ["ember-guard", 1], ["inferno", 1],
+  ["cinder-rain", 1], ["wildfire", 1], ["tide-cut", 2],
+  ["tide-shield", 1], ["riptide", 1], ["flood", 1],
+  ["mist-veil", 1], ["undertow", 1], ["thorn-whip", 1],
+  ["mend", 1], ["overgrowth", 1], ["regrowth", 1],
+  ["thorn-storm", 1], ["root-snare", 1], ["stone-slam", 1],
+  ["stone-wall", 1], ["quake", 1], ["boulder", 1],
+  ["fortress", 1], ["avalanche", 1],
 ];
 
 // Element Echo: playing two cards of the same element in one turn
 // charges the second one — +2 to its damage, block or heal.
 const ECHO_BONUS = 2;
 
-// A shuffled 20-card deck from a random function rng() in [0, 1).
+// A shuffled 28-card deck from a random function rng() in [0, 1).
 function buildDeck(rng) {
   const deck = [];
   for (const [id, count] of DECK_LIST) {

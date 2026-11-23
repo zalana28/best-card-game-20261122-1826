@@ -21,7 +21,9 @@ function scoreCard(card, energy, self, foe, threat) {
 
 // Pick the best affordable card from a hand, or null when nothing
 // is worth playing. opts.aggression lifts damage, opts.caution lifts
-// block and healing; the autopilot reuses this with its own settings.
+// block and healing; opts.echoElement lifts cards whose element would
+// trigger Element Echo off a card already played this turn. The
+// autopilot reuses this with its own settings.
 function pickBestCard(hand, energy, self, foe, threat, opts) {
   const o = opts || {};
   let best = null;
@@ -32,24 +34,36 @@ function pickBestCard(hand, energy, self, foe, threat, opts) {
     if (score < 0) continue;
     if (card.dmg) score *= (o.aggression || 1);
     if (card.block || card.heal) score *= (o.caution || 1);
+    if (o.echoElement && card.element === o.echoElement) score += 2 / card.cost;
     if (score > bestScore) { bestScore = score; best = id; }
   }
   return best;
 }
 
-// Plan the opponent's whole turn: up to two cards, chosen greedily,
+// Plan the opponent's whole turn: up to three cards, chosen greedily,
 // and the intent line the table shows the player in advance.
+//
+// The Warden adapts: when the player is hurt it turns finisher and
+// presses damage; when it is hurt itself it turns cautious and guards
+// and mends; and its second and third picks favour the element of the
+// card it already chose, so its Echo fires on purpose, not by luck.
 function planOpponentTurn(foe, player, rng) {
   const threat = player.hand.reduce((n, id) => n + (CARDS[id].dmg || 0), 0);
+  const playerHurt = player.hp <= player.maxHp * 0.35;
+  const foeHurt = foe.hp <= foe.maxHp * 0.35;
+  const aggression = playerHurt ? 1.5 : 1.15;
+  const caution = foeHurt ? 1.6 : (threat >= 8 ? 1.2 : 1);
   const plays = [];
   let energy = 3;
   const hand = foe.hand.slice();
-  for (let i = 0; i < 2; i += 1) {
-    const id = pickBestCard(hand, energy, foe, player, threat, { aggression: 1, caution: 1 });
+  let echoElement = null;
+  for (let i = 0; i < 3; i += 1) {
+    const id = pickBestCard(hand, energy, foe, player, threat, { aggression, caution, echoElement });
     if (!id) break;
     plays.push(id);
     hand.splice(hand.indexOf(id), 1);
     energy -= CARDS[id].cost;
+    if (!echoElement) echoElement = CARDS[id].element;
   }
   const parts = [];
   let dmg = 0, block = 0, heal = 0;
@@ -62,9 +76,10 @@ function planOpponentTurn(foe, player, rng) {
   if (dmg > 0) parts.push("Strike " + dmg);
   if (block > 0) parts.push("Guard " + block);
   if (heal > 0) parts.push("Mend " + heal);
+  const mood = playerHurt ? "Finisher! " : (foeHurt ? "Cornered: " : "");
   return {
     plays,
-    intent: parts.length ? parts.join(" · ") : "Gathers embers…",
+    intent: mood + (parts.length ? parts.join(" · ") : "Gathers embers…"),
     totalDamage: dmg,
   };
 }
